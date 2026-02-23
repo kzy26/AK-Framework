@@ -1,0 +1,56 @@
+{
+  "name": "ak-framework",
+  "version": "1.0.0",
+  "description": "AI-Orchestration Driven Development Framework for Claude Code - Build Smart, Ship Fast",
+  "type": "module",
+  "bin": {
+    "ak-framework": "./bin/ak-cli.js",
+    "ak": "./bin/ak-cli.js"
+  },
+  "files": [
+    "bin",
+    "installer",
+    "src",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "install:local": "node bin/ak-cli.js install",
+    "list": "node bin/ak-cli.js list",
+    "status": "node bin/ak-cli.js status"
+  },
+  "keywords": [
+    "ai",
+    "claude",
+    "claude-code",
+    "framework",
+    "orchestration",
+    "aodd",
+    "multi-agent",
+    "fullstack",
+    "nextjs",
+    "fastify",
+    "prisma",
+    "typescript"
+  ],
+  "author": "phai-ak",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kzy26/AK-Framework.git"
+  },
+  "homepage": "https://github.com/kzy26/AK-Framework",
+  "bugs": {
+    "url": "https://github.com/kzy26/AK-Framework/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "commander": "^13.1.0",
+    "fs-extra": "^11.3.0",
+    "inquirer": "^12.3.2",
+    "ora": "^8.2.0"
+  }
+}

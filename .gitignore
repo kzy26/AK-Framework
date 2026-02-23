@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+package-lock.json
 
 # Environment
 .env
@@ -36,6 +37,7 @@ coverage/
 
 # AK Framework - Memory archive (keep main memory files, ignore archive)
 .claude/memory/archive/
+.ak/
 
 # Secrets
 *.key

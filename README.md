@@ -3,6 +3,7 @@
 > **"Build Smart, Ship Fast"** - AI-Orchestration Driven Development for Claude Code
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![npm version](https://img.shields.io/npm/v/ak-framework.svg)](https://www.npmjs.com/package/ak-framework)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Compatible-orange.svg)](https://claude.ai/claude-code)
 [![Opus 4.6](https://img.shields.io/badge/Opus_4.6-Optimized-purple.svg)](https://anthropic.com)
 
@@ -13,20 +14,19 @@ Using the **AODD** (AI-Orchestration Driven Development) approach, a solo develo
 ## Requirements
 
 - [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) (required)
-- [Node.js](https://nodejs.org) LTS (recommended)
+- [Node.js](https://nodejs.org) >= 18 (required)
 - [Git](https://git-scm.com)
 
 ## Quick Start
 
-### Option 1: Add to Existing Project
+### Install with NPX (Recommended)
 
 ```bash
-# Clone AK Framework
-git clone https://github.com/phai-ak/AK-Framework.git
+# Install into current project
+npx ak-framework install
 
-# Run setup in your project directory
-cd your-project
-/path/to/AK-Framework/setup.sh init
+# Quick install (no prompts)
+npx ak-framework install --quick
 
 # Open with Claude Code
 claude .
@@ -35,29 +35,29 @@ claude .
 /ak-help
 ```
 
-### Option 2: Create New Project
+### Other NPX Commands
 
 ```bash
-git clone https://github.com/phai-ak/AK-Framework.git
-cd AK-Framework
+# List all commands, agents, and skills
+npx ak-framework list
 
-./setup.sh new my-awesome-app
-cd my-awesome-app
-claude .
+# Check installation status
+npx ak-framework status
 
-# Start building!
-/ak-vibe payment management system
+# Update to latest version
+npx ak-framework@latest install
 ```
 
-### Option 3: Manual Copy
+### Alternative: Manual Setup
 
 ```bash
-# Copy .claude folder and CLAUDE.md to your project
-cp -r AK-Framework/.claude your-project/.claude
-cp AK-Framework/CLAUDE.md your-project/CLAUDE.md
-
+# Clone and run setup script
+git clone https://github.com/kzy26/AK-Framework.git
 cd your-project
-claude .
+/path/to/AK-Framework/setup.sh init
+
+# Or create new project
+./setup.sh new my-awesome-app
 ```
 
 ## Commands
@@ -152,15 +152,6 @@ AK Framework automatically manages context across sessions:
 | `components.md` | Component/API registry |
 | `changelog.md` | Change history |
 | `agents-log.md` | Agent activity log |
-
-## Setup Script
-
-```bash
-./setup.sh init      # Add to current project
-./setup.sh new       # Create new project
-./setup.sh check     # Verify installation
-./setup.sh update    # Update framework (keeps memory)
-```
 
 ## Customization
 
