@@ -72,7 +72,7 @@ claude .
 | `/ak-db` | `/ak-d` | Database - Prisma schema, migrations |
 | `/ak-cache` | `/ak-c` | Cache - Redis caching strategies |
 | `/ak-design` | `/ak-ds` | Polish design - Professional UX/UI |
-| `/ak-test` | `/ak-t` | Test - Auto test & fix loop |
+| `/ak-test` | `/ak-t` | Test - Jest (backend) + Vitest (frontend) + auto-fix |
 | `/ak-fix` | `/ak-f` | Debug - Systematic bug fixing |
 | `/ak-ship` | `/ak-s` | Deploy - DigitalOcean deployment |
 | `/ak-help` | `/ak-h` | Show all commands |
@@ -103,7 +103,7 @@ Orchestrator (Opus 4.6):
 | DB Architect | Prisma schema, migrations, queries | Opus 4.6 |
 | Cache Engineer | Redis caching, invalidation | Sonnet 4.6 |
 | Design Reviewer | UX/UI polish, animation, accessibility | Sonnet 4.6 |
-| Test Runner | Auto test + fix loop | Sonnet 4.6 |
+| Test Runner | Jest (backend), Vitest (frontend), Playwright (E2E), auto-fix | Sonnet 4.6 |
 | DevOps Engineer | Docker, DigitalOcean, CI/CD | Sonnet 4.6 |
 
 ## Default Tech Stack
@@ -121,7 +121,8 @@ Orchestrator (Opus 4.6):
 | Styling | Tailwind CSS + shadcn/ui |
 | State | Zustand |
 | Forms | React Hook Form + Zod |
-| Testing | Vitest + Playwright |
+| Testing (Frontend) | Vitest + Playwright |
+| Testing (Backend) | Jest + ts-jest |
 | Deploy | DigitalOcean |
 | Language | TypeScript (strict) |
 
@@ -132,7 +133,7 @@ your-project/
 ├── .claude/
 │   ├── commands/       # 12 slash commands
 │   ├── agents/         # 8 sub-agent definitions
-│   ├── skills/         # 10 skill definitions
+│   ├── skills/         # 11 skill definitions
 │   └── memory/         # 7 memory files (auto-managed)
 ├── CLAUDE.md           # Framework configuration
 └── (your project files)
