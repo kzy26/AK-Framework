@@ -1,7 +1,7 @@
 # /ak-fix - Bug Fix Command
 
 > **Command:** `/ak-fix [description]` | **Shortcut:** `/ak-f`
-> **Agent:** Test Runner | **Skills:** test-engineer, security-engineer
+> **Agent:** Test Runner | **Skills:** test-engineer, test-engineer-backend, security-engineer
 
 ## Mission
 ดีบักและแก้บั๊กอย่างเป็นระบบ

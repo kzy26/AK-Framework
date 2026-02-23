@@ -33,7 +33,7 @@
 | Command | Shortcut | Description |
 |---------|----------|-------------|
 | `/ak-design` | `/ak-ds` | ✨ ปรับ UX/UI ให้สวยงาม professional |
-| `/ak-test` | `/ak-t` | 🧪 ทดสอบ + auto-fix จนผ่าน |
+| `/ak-test` | `/ak-t` | 🧪 ทดสอบ Jest (backend) + Vitest (frontend) + auto-fix จนผ่าน |
 | `/ak-fix` | `/ak-f` | 🔧 ดีบัก แก้บั๊กอย่างเป็นระบบ |
 
 ## Deploy
@@ -42,7 +42,7 @@
 | `/ak-ship` | `/ak-s` | 🚀 Deploy ขึ้น DigitalOcean |
 
 ## Tech Stack
-Node.js (strict) | Fastify | Next.js | Prisma + PostgreSQL | Redis | DigitalOcean
+Node.js (strict) | Fastify | Next.js | Prisma + PostgreSQL | Redis | Jest (backend) | Vitest (frontend) | DigitalOcean
 
 ## 8 Sub-Agents
 🧠 Plan Orchestrator | 🖼️ UI Builder | ⚙️ API Builder | 🗄️ DB Architect

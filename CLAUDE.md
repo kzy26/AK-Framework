@@ -29,7 +29,8 @@ You are the **AK Orchestrator** - an AI expert in building production-grade web 
 | State | Zustand | Client-side state |
 | Forms | React Hook Form + Zod | Validation |
 | Auth | NextAuth.js / JWT | Session management |
-| Testing | Vitest + Playwright | Unit + E2E |
+| Testing (Frontend) | Vitest + Playwright | Unit + E2E |
+| Testing (Backend) | Jest + ts-jest | Unit + Integration |
 | Deploy | DigitalOcean | Droplet / App Platform |
 | VCS | Git | Conventional commits |
 | Language | TypeScript | Strict mode everywhere |
@@ -141,7 +142,7 @@ Use realistic Thai data:
 | 🗄️ DB Architect | `db-architect.md` | Opus 4.6 | Prisma schema, migrations, queries |
 | 🔴 Cache Engineer | `cache-engineer.md` | Sonnet 4.6 | Redis caching, invalidation |
 | ✨ Design Reviewer | `design-reviewer.md` | Sonnet 4.6 | UX/UI polish, animation, accessibility |
-| 🧪 Test Runner | `test-runner.md` | Sonnet 4.6 | Vitest + Playwright, auto-fix loop |
+| 🧪 Test Runner | `test-runner.md` | Sonnet 4.6 | Jest (backend), Vitest (frontend), Playwright (E2E), auto-fix loop |
 | 🚀 DevOps Engineer | `devops-engineer.md` | Sonnet 4.6 | DigitalOcean deploy, Docker, CI/CD |
 
 ### How to Use Sub-Agents
@@ -253,8 +254,8 @@ STEP 7: Confirm: "💾 Memory saved ✅"
 | `/ak-db` | `db-architecture` | `db-architect.md` |
 | `/ak-cache` | `cache-strategy` | `cache-engineer.md` |
 | `/ak-design` | `ux-design-system` | `design-reviewer.md` |
-| `/ak-test` | `test-engineer` | `test-runner.md` |
-| `/ak-fix` | `test-engineer`, `security-engineer` | `test-runner.md` |
+| `/ak-test` | `test-engineer`, `test-engineer-backend` | `test-runner.md` |
+| `/ak-fix` | `test-engineer`, `test-engineer-backend`, `security-engineer` | `test-runner.md` |
 | `/ak-ship` | `devops-pipeline` | `devops-engineer.md` |
 
 ### Loading Protocol:

@@ -14,7 +14,7 @@
 | Commands | `/ak-test`, `/ak-fix` |
 | Shortcuts | `/ak-t`, `/ak-f` |
 | Model | Sonnet 4.6 |
-| Skills | `test-engineer`, `security-engineer` |
+| Skills | `test-engineer`, `test-engineer-backend`, `security-engineer` |
 
 ---
 
@@ -27,14 +27,51 @@ Auto-fix loop: test -> find error -> fix code -> retest until ALL pass.
 
 ## Tech Stack (Fixed!)
 
-| Technology | Usage |
-|------------|-------|
-| Vitest | Unit testing framework |
-| @testing-library/react | React component testing |
-| Playwright | E2E browser testing |
-| supertest / Fastify inject | API endpoint testing |
-| TypeScript | Type checking (strict mode) |
-| ESLint | Code linting |
+| Technology | Usage | Scope |
+|------------|-------|-------|
+| Jest + ts-jest | Backend unit/integration testing | `apps/api/` |
+| jest-mock-extended | Prisma & dependency mocking | `apps/api/` |
+| Vitest | Frontend unit testing | `apps/web/` |
+| @testing-library/react | React component testing | `apps/web/` |
+| Playwright | E2E browser testing | `apps/web/e2e/` |
+| Fastify inject | API endpoint integration testing | `apps/api/` |
+| TypeScript | Type checking (strict mode) | All |
+| ESLint | Code linting | All |
+
+---
+
+## Framework Selection
+
+When determining which test framework to use:
+
+| Context | Framework | Command |
+|---------|-----------|---------|
+| File in `apps/api/` | **Jest** | `npx jest --runInBand` |
+| File in `apps/web/` | **Vitest** | `npx vitest run` |
+| E2E tests (`e2e/`) | **Playwright** | `npx playwright test` |
+| Unspecified scope | Run both | Jest (api) then Vitest (web) |
+
+### Detection Rules
+```
+1. Explicit path mentioned?
+   - apps/api/** -> Jest
+   - apps/web/** -> Vitest
+
+2. Keywords detected?
+   - "service", "route", "controller", "middleware", "api", "backend" -> Jest
+   - "component", "page", "hook", "store", "ui", "frontend" -> Vitest
+   - "e2e", "flow", "browser" -> Playwright
+
+3. Specific test file?
+   - *.test.ts in apps/api/ -> Jest
+   - *.test.tsx or *.test.ts in apps/web/ -> Vitest
+   - *.spec.ts -> Playwright
+
+4. No scope / "all"?
+   - Run Jest (apps/api/) first
+   - Then Vitest (apps/web/)
+   - Then Playwright (if E2E requested)
+```
 
 ---
 
@@ -56,13 +93,23 @@ apps/web/
 └── vitest.config.ts
 
 apps/api/
+├── jest.config.ts           # Jest configuration
+├── tsconfig.test.json       # TypeScript config for tests
 ├── tests/
+│   ├── setup.ts             # Global Jest setup (Prisma/Redis mocks)
+│   ├── helpers/
+│   │   ├── auth.helper.ts   # Token generation helpers
+│   │   └── app.helper.ts    # buildApp wrapper for tests
+│   ├── factories/
+│   │   └── [model].factory.ts
 │   ├── routes/
 │   │   └── [route].test.ts
 │   ├── services/
 │   │   └── [service].test.ts
-│   └── setup.ts            # Test setup/teardown
-└── vitest.config.ts
+│   ├── controllers/
+│   │   └── [controller].test.ts
+│   └── middleware/
+│       └── [middleware].test.ts
 ```
 
 ---
@@ -70,14 +117,17 @@ apps/api/
 ## Auto-Fix Loop Protocol
 
 ```
-1. Run tests
-2. Analyze failures
-3. Identify root cause
-4. Fix the CODE (not the test!)
-5. Re-run tests
-6. Repeat until ALL pass
-7. Run build verification
-8. Run TypeScript check
+1. Determine scope (api/web/all) from user request
+2. Run appropriate test runner(s):
+   - API: npx jest --runInBand (in apps/api/)
+   - Web: npx vitest run (in apps/web/)
+3. Analyze failures
+4. Identify root cause
+5. Fix the CODE (not the test!)
+6. Re-run the failing framework ONLY
+7. Repeat until ALL pass
+8. Run build verification for BOTH apps
+9. Run TypeScript check
 ```
 
 ### Decision: Fix Code vs Fix Test
@@ -98,49 +148,77 @@ Test is wrong:
 
 ## Test Patterns
 
-### Unit Test (Service)
+### Backend: Service Unit Test (Jest)
 ```typescript
-// tests/services/user.service.test.ts
-import { describe, it, expect, beforeEach, vi } from "vitest"
+// apps/api/tests/services/user.service.test.ts
 import { UserService } from "../../src/services/user.service"
+import { prisma } from "@packages/db"
+import { PrismaClient } from "@prisma/client"
+import { DeepMockProxy } from "jest-mock-extended"
+
+const prismaMock = prisma as unknown as DeepMockProxy<PrismaClient>
 
 describe("UserService", () => {
   let service: UserService
 
   beforeEach(() => {
     service = new UserService()
-    vi.clearAllMocks()
   })
 
   describe("create", () => {
     it("should create a user with valid data", async () => {
       const input = { name: "สมชาย ใจดี", email: "somchai@example.com" }
+      prismaMock.user.create.mockResolvedValue({
+        id: "cuid-1",
+        ...input,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      })
+
       const result = await service.create(input)
 
-      expect(result).toBeDefined()
       expect(result.name).toBe(input.name)
-      expect(result.email).toBe(input.email)
+      expect(prismaMock.user.create).toHaveBeenCalledWith({
+        data: expect.objectContaining(input),
+      })
     })
 
     it("should throw on duplicate email", async () => {
-      // ...
+      prismaMock.user.create.mockRejectedValue(
+        new Error("Unique constraint failed")
+      )
+
+      await expect(service.create(duplicateData)).rejects.toThrow()
     })
   })
 })
 ```
 
-### API Test (Route)
+### Backend: Route Integration Test (Jest + Fastify inject)
 ```typescript
-// tests/routes/users.test.ts
-import { describe, it, expect } from "vitest"
-import { buildApp } from "../../src/app"
+// apps/api/tests/routes/users.test.ts
+import { FastifyInstance } from "fastify"
+import { getTestApp, closeTestApp } from "../helpers/app.helper"
+import { createAdminToken } from "../helpers/auth.helper"
 
 describe("GET /api/v1/users", () => {
+  let app: FastifyInstance
+
+  beforeAll(async () => {
+    app = await getTestApp()
+  })
+
+  afterAll(async () => {
+    await closeTestApp()
+  })
+
   it("should return paginated users", async () => {
-    const app = await buildApp()
+    const token = createAdminToken()
     const response = await app.inject({
       method: "GET",
       url: "/api/v1/users?page=1&limit=10",
+      headers: { authorization: `Bearer ${token}` },
     })
 
     expect(response.statusCode).toBe(200)
@@ -149,12 +227,21 @@ describe("GET /api/v1/users", () => {
     expect(body.data).toBeDefined()
     expect(body.meta.page).toBe(1)
   })
+
+  it("should return 401 without authentication", async () => {
+    const response = await app.inject({
+      method: "GET",
+      url: "/api/v1/users",
+    })
+
+    expect(response.statusCode).toBe(401)
+  })
 })
 ```
 
-### Component Test
+### Frontend: Component Test (Vitest)
 ```typescript
-// __tests__/components/stats-card.test.tsx
+// apps/web/__tests__/components/stats-card.test.tsx
 import { describe, it, expect } from "vitest"
 import { render, screen } from "@testing-library/react"
 import { StatsCard } from "@/components/dashboard/stats-card"
@@ -207,8 +294,10 @@ After all tests pass, also verify:
 ```
 1. TypeScript: npx tsc --noEmit (0 errors)
 2. ESLint: npx eslint . (0 errors)
-3. Build API: npm run build -w apps/api
-4. Build Web: npm run build -w apps/web
+3. Test API: npx jest --runInBand -w apps/api
+4. Test Web: npx vitest run -w apps/web
+5. Build API: npm run build -w apps/api
+6. Build Web: npm run build -w apps/web
 ```
 
 ---
@@ -229,10 +318,10 @@ After all tests pass, also verify:
 ## Announcement Format
 
 ```
-[Test Runner] Starting: {test_suite}
-[Test Runner] Result: {passed}/{total} tests passed
+[Test Runner] Starting: {test_suite} ({jest|vitest|playwright})
+[Test Runner] Result: {passed}/{total} tests passed ({framework})
 [Test Runner] Fix: {description} in {file}
-[Test Runner] Complete: All tests passing
+[Test Runner] Complete: All tests passing (Jest: X, Vitest: Y, E2E: Z)
 ```
 
 ---

@@ -1,16 +1,17 @@
-# Test Engineer Skill
+# Frontend Test Engineer Skill
 
-> Testing Strategy & Quality Assurance Patterns
+> Frontend Testing Strategy with Vitest & React Testing Library
 
 ## Capability
 
 This skill provides knowledge of:
 - Testing pyramid and strategy
-- Vitest configuration and patterns
+- Vitest configuration for Next.js frontend
 - React Testing Library best practices
 - Playwright E2E testing patterns
-- Fastify API testing with inject
 - Auto-fix loop methodology
+
+> **Note:** For backend API testing (Fastify / apps/api/), see `test-engineer-backend` skill.
 
 ## Testing Pyramid
 
@@ -82,48 +83,6 @@ describe("UserService", () => {
     it("should throw on duplicate email", async () => {
       await expect(service.create(duplicateData))
         .rejects.toThrow("Email already exists")
-    })
-  })
-})
-```
-
-### API Route Test (Integration)
-```typescript
-import { describe, it, expect, beforeAll, afterAll } from "vitest"
-import { buildApp } from "../src/app"
-import { FastifyInstance } from "fastify"
-
-describe("Users API", () => {
-  let app: FastifyInstance
-
-  beforeAll(async () => {
-    app = await buildApp()
-  })
-
-  afterAll(async () => {
-    await app.close()
-  })
-
-  describe("GET /api/v1/users", () => {
-    it("should return paginated list", async () => {
-      const res = await app.inject({
-        method: "GET",
-        url: "/api/v1/users?page=1&limit=10",
-      })
-
-      expect(res.statusCode).toBe(200)
-      const body = JSON.parse(res.payload)
-      expect(body.success).toBe(true)
-      expect(Array.isArray(body.data)).toBe(true)
-    })
-
-    it("should require authentication", async () => {
-      const res = await app.inject({
-        method: "GET",
-        url: "/api/v1/users",
-      })
-
-      expect(res.statusCode).toBe(401)
     })
   })
 })
@@ -223,10 +182,10 @@ STEP 3: If all pass:
 
 | Module | Target | Justification |
 |--------|--------|---------------|
-| Services | 80%+ | Core business logic |
-| Controllers | 70%+ | Request handling |
-| Utilities | 90%+ | Pure functions, easy to test |
 | Components | 60%+ | Interaction testing |
+| Hooks | 70%+ | Custom hook logic |
+| Utilities | 90%+ | Pure functions, easy to test |
+| Stores (Zustand) | 75%+ | State management logic |
 | E2E | Critical paths | Login, checkout, CRUD |
 
 ## Best Practices
